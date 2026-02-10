@@ -1,9 +1,0 @@
-streamlit
-pandas
-xlsxwriter
-requests==2.31.0
-urllib3==1.26.15
-akshare
-lxml
-beautifulsoup4
-html5lib
