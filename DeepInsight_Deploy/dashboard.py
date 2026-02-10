@@ -5,19 +5,42 @@ import time
 import ssl
 
 # ==========================================
-# 0. 前端环境 SSL 修复 (双重保险)
+# 🔍 终极调试探针 (新增)
 # ==========================================
-try:
-    _create_unverified_https_context = ssl._create_unverified_context
-except AttributeError:
-    pass
+st.write("### 🔍 系统路径自检")
+current_dir = os.getcwd()
+st.write(f"📂 当前工作目录: `{current_dir}`")
+
+st.write("📂 目录下的文件清单:")
+files = os.listdir(current_dir)
+st.code(str(files))
+
+services_path = os.path.join(current_dir, 'services')
+if os.path.exists(services_path):
+    st.success("✅ 找到了 services 文件夹！")
+    st.write("📂 services 文件夹里的内容:")
+    st.code(str(os.listdir(services_path)))
 else:
-    ssl._create_default_https_context = _create_unverified_https_context
+    st.error(f"❌ 找不到 services 文件夹！它应该在: {services_path}")
+    # 尝试递归查找
+    st.write("🕵️‍♀️ 正在尝试全盘搜索 services...")
+    found = False
+    for root, dirs, files in os.walk(current_dir):
+        if 'services' in dirs:
+            found_path = os.path.join(root, 'services')
+            st.warning(f"⚠️ 找到了！但是它藏在这里: `{found_path}`")
+            sys.path.append(root) # 自动修复路径
+            st.info(f"🔧 已自动修正路径，尝试重新加载...")
+            found = True
+            break
+    if not found:
+        st.error("☠️ 全盘搜索失败，services 文件夹真的不在代码库里。")
+        st.stop()
 
-# 将当前目录加入路径，确保能找到 services 文件夹
-sys.path.append(os.getcwd())
-
-# 导入后端引擎 (确保 services/model_engine.py 存在)
+# ==========================================
+# 0. 前端环境 SSL 修复
+# ==========================================
+# ... (后面接原来的代码)
 try:
     from services.model_engine import create_model, fetch_data
 except ImportError:
