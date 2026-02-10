@@ -1,0 +1,6 @@
+streamlit
+akshare
+pandas
+xlsxwriter
+urllib3==1.26.15
+requests
